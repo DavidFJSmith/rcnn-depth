@@ -4,8 +4,7 @@ allclassNum=length(catName);
 
 %处理全部的GT，对一张图片进行语义分割处理
 c=benchmarkPaths();
-allcolors=extractcolors(allclassNum);
-dt = getMetadata('classMappingAll');
+allcolors=extractcolors(allclassNum+1);%多一个颜色用作意外处理
 allclassname_=dt.allClassName;
 mapclass_=dt.mapClass;
 name2color_map = containers.Map;
@@ -25,9 +24,9 @@ for i=1:allclassNum
     num2cls_map(num_key)=catName{i};
     name2color_map(catName{i})=allcolors{i};%从类标到颜色的一个map
 end
+    
 %构建出一张hash表
 cls2num_map = containers.Map(catName,index);
-
 databasemap.name2color_map=name2color_map;
 databasemap.num2cls_map=num2cls_map;
 databasemap.cls2num_map=cls2num_map;
