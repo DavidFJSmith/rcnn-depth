@@ -21,7 +21,7 @@ rawdepth=[datadir 'data/rawdepth'];
 gt_dir=[datadir 'benchmarkData/groundTruth'];
 
 C = cropCamera(getCameraParam('color'));
-out_file = fullfile('demo-data', 'output.mat');
+
 
 %获取对应的颜色的GT。
 allname=dir(imdir);
@@ -33,7 +33,7 @@ for ii=3:length(allname)
     GTname=strrep(imageName,'.png','.mat');
     GT= load(fullfile(gt_dir,GTname));
     GT=GT.groundTruth;
-    
+    out_file = fullfile('demo-data',GTname);
     backgroundcolor=[0,0,0];
     %画出整个的GT：
     gt_seg=GT{1}.SegmentationClass;
@@ -55,10 +55,37 @@ for ii=3:length(allname)
             end
         end
     end
-    imshow(I);
-    imshow(uint8(Gt_color_image));
+    %保存GT
+    %save();
+    
+    %imshow(I);
+    %imshow(uint8(Gt_color_image));
+    
+    %对已经predict的图片进行一次颜色处理
+    cls_img=run_all_segmantic(I, D, RD, C, out_file);
+    cls_o_color_image=zeros(size(cls_img,1),size(cls_img,2),size(cls_img,3));
+        %把cls_img映射到color：
+    for gt_ii=1:size(cls_img,1)
+        for gt_kk=1:size(cls_img,2)
+            GtClass=cls_img(gt_ii,gt_kk);
+            t_f=databasemap.num2cls_map.isKey(num2str(GtClass));
+            if t_f==0
+                %这就是背景。
+                cls_o_color_image(gt_ii,gt_kk,:)=backgroundcolor;
+            else
+                %取得相应的颜色。
+                cls__=databasemap.num2cls_map(num2str(GtClass));
+                cls_color=databasemap.name2color_map(cls__);
+                cls_o_color_image(gt_ii,gt_kk,:)=cls_color;
+            end
+        end
+    end
+    
+    %保存Output
+    %save();
+    imshow(cls_o_color_image);
 end
 
-classnum=databasemap.cls2num_map(cls_);
+%=databasemap.cls2num_map(cls_);
 %读取数据集，并且对一张图片进行处理，处理出GT
-cls_img=run_all_segmantic(I, D, RD, C, out_file);
+

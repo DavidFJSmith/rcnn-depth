@@ -11,7 +11,7 @@ model = model.model;
 sc = [2 1 0.5];
 [E, Es, O] = detectEdge(I, D, [], C, model, sc, [], []);
 [ucm2 ucms] = contours_to_ucm(I, sc, Es, O);
-if(~isempty(out_file)), save(out_file, 'E', 'Es', 'O', 'ucm2', 'ucms'); end
+%if(~isempty(out_file)), save(out_file, 'E', 'Es', 'O', 'ucm2', 'ucms'); end
 
 %compute the superpixel
 sp = bwlabel(ucm2 < 0.20);
@@ -99,7 +99,7 @@ for i=1:SuperPixelNum
         imcls(row(rr_),col(rr_))=classnum;
     end
     %show the image
-    
+    save(out_file,'imcls');
 end
 
 end
